@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingContainer">
+        <div id="logoContainer">
+            <img id="loadingLogo" src="Logo2.png" alt="Logo" />
+            <div id="progressBar">
+                <div id="progress"></div> <!-- This will fill up with green color -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Simulation Content -->
+    <div id="simulationContent" style="display: none;">
+        <div id="title">DC and AC Motor Simulation</div>
+        
+        <div id="main">
+            <div id="container">
+                <img id="logo" src="Logo2.png" alt="Logo" />
+                <div id="calcInfo">
+                    <p>Voltage: <span id="voltageOutput">10</span> V</p>
+                    <p>Speed: <span id="speedOutput">1000</span> RPM</p>
+                    <p>Current: <span id="currentOutput">2</span> A</p>
+                </div>
+            </div>
+
+            <div id="controls">
+                <label for="motorType">Motor Type:</label>
+                <select id="motorType">
+                    <option value="DC">DC Motor</option>
+                    <option value="AC">AC Motor</option>
+                </select>
+
+                <label for="voltageSlider">Voltage (V):</label>
+                <input type="range" id="voltageSlider" min="0" max="240" value="10">
+                <div id="voltageTooltip" class="tooltip tooltip-voltage">Voltage (V): Controls the input power to the motor.</div>
+
+                <label for="speedSlider">Speed (RPM):</label>
+                <input type="range" id="speedSlider" min="0" max="3000" value="1000">
+                <div id="speedTooltip" class="tooltip tooltip-speed">Speed (RPM): Controls the rotation speed of the motor.</div>
+
+                <button id="startButton">Start Motor</button>
+                <button id="stopButton">Stop Motor</button>
+                <button id="showGraphButton">Show Graph</button> <!-- New Graph Button -->
+                <button id="quiz" onclick="startQuiz()">Start Quiz</button>
+            </div>
+        </div>
+
+        <!-- Canvas for Graph -->
+        <div id="graphContainer">
+            <canvas id="graphCanvas"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="sketch.js"></script>
+    <script>
+        // Simulate loading effect
+        window.addEventListener('load', function () {
+            let progressBar = document.getElementById('progress');
+            let loadingContainer = document.getElementById('loadingContainer');
+            let simulationContent = document.getElementById('simulationContent');
+
+            let width = 0;
+            let loading = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(loading);
+                    loadingContainer.style.display = 'none';
+                    simulationContent.style.display = 'block';  // Show simulation content
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%';
+                }
+            }, 30);  // Adjust this value for loading speed
+        });
+
+        function startQuiz() {
+            window.location.href = 'quiz.html';  
+        }
+    </script>
+</body>
+</html>

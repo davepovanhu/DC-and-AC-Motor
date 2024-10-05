@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="quizSection">
+        <div id="question"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+        <button id="prevButton" class="quiz-button" style="display: none;" onclick="previousQuestion()">Previous</button>
+        <button id="nextButton" class="quiz-button" style="display: none;" onclick="nextQuestion()">Next</button>
+        <button id="seeAnswersButton" class="quiz-button" style="display: none;" onclick="showCorrectAnswers()">See Correct Answers</button>
+        <button id="backButton" class="quiz-button" onclick="goBack()">Go Back</button>
+    </div>
+
+    <script src="quiz.js"></script>
+</body>
+</html>
