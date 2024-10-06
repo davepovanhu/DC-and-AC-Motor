@@ -1,9 +1,6 @@
-let voltageSlider, speedSlider, motorTypeSelector;
-let motorType = 'DC', voltage = 10, speed = 1000;
-let isRunning = false, current = 2;
-let motorAngle = 0; // For visualizing motor rotation
-let showGraph = false; // New flag for showing the graph
-let graphData = []; // To store the graph points
+let voltageSlider, speedSlider, currentSlider, torqueSlider, frequencySlider, resistanceSlider, motorTypeSelector;
+let motorType = 'DC', voltage = 10, current = 2, speed = 1000, torque = 10, frequency = 50, resistance = 5;
+let isRunning = false, motorAngle = 0, showGraph = false, graphData = [];
 
 function setup() {
     const canvas = createCanvas(600, 450);
@@ -11,9 +8,21 @@ function setup() {
 
     // Get HTML elements
     voltageSlider = select('#voltageSlider');
+    currentSlider = select('#currentSlider');
     speedSlider = select('#speedSlider');
+    torqueSlider = select('#torqueSlider');
+    frequencySlider = select('#frequencySlider');
+    resistanceSlider = select('#resistanceSlider');
     motorTypeSelector = select('#motorType');
     select('#showGraphButton').mousePressed(toggleGraph);  // Link Show Graph button
+
+    // Add event listeners to update slider background dynamically
+    voltageSlider.input(updateSliderBackground);
+    currentSlider.input(updateSliderBackground);
+    speedSlider.input(updateSliderBackground);
+    torqueSlider.input(updateSliderBackground);
+    frequencySlider.input(updateSliderBackground);
+    resistanceSlider.input(updateSliderBackground);
 
     // Button event handlers
     select('#startButton').mousePressed(startMotor);
@@ -40,6 +49,16 @@ function draw() {
     }
 }
 
+// Function to update slider background dynamically
+function updateSliderBackground() {
+    let max = this.elt.max;
+    let value = this.elt.value;
+    let percentage = (value / max) * 100;
+
+    // Update background gradient based on percentage filled
+    this.elt.style.background = `linear-gradient(to right, green ${percentage}%, white ${percentage}%)`;
+}
+
 function drawMotor() {
     // Draw motor visualization
     fill(100, 150, 200);
@@ -63,15 +82,19 @@ function drawMotor() {
 }
 
 function updateMotor() {
-    // Update motor type, voltage, and speed based on user input
+    // Update motor type, voltage, current, and speed based on user input
     motorType = motorTypeSelector.value();
     voltage = voltageSlider.value();
+    current = currentSlider.value();
+    torque = torqueSlider.value();
+    resistance = resistanceSlider.value();
 
-    // Speed control logic: For DC Motor, speed is directly tied to voltage
+    // Speed control logic: For DC Motor, speed is directly tied to voltage and resistance
     if (motorType === 'DC') {
-        speed = voltage * 10;  // Arbitrary multiplier to scale voltage to speed
+        speed = voltage / resistance * 100;  // Simple DC speed calculation
     } else {
-        speed = speedSlider.value();  // For AC motor, the speed is manually controlled
+        speed = speedSlider.value();  // For AC motor, speed is manually controlled
+        frequency = frequencySlider.value();  // Only applies for AC motor
     }
 
     // Store graph data
@@ -82,10 +105,14 @@ function updateMotor() {
 function displayCalculations() {
     // Update current based on motor type (simple physics)
     current = (motorType === 'DC') ? voltage / speed : voltage / (speed * 1.5);
+    
     // Update HTML outputs
     select('#voltageOutput').html(voltage);
     select('#speedOutput').html(speed.toFixed(0));  // Show speed value in integer form
     select('#currentOutput').html(current.toFixed(2));
+    select('#torqueOutput').html(torque.toFixed(2));
+    select('#frequencyOutput').html(frequency.toFixed(0));
+    select('#resistanceOutput').html(resistance.toFixed(0));
 }
 
 function startMotor() {
@@ -103,6 +130,18 @@ function setupTooltips() {
 
     speedSlider.mouseOver(() => showTooltip('#speedTooltip'));
     speedSlider.mouseOut(() => hideTooltip('#speedTooltip'));
+
+    currentSlider.mouseOver(() => showTooltip('#currentTooltip'));
+    currentSlider.mouseOut(() => hideTooltip('#currentTooltip'));
+
+    torqueSlider.mouseOver(() => showTooltip('#torqueTooltip'));
+    torqueSlider.mouseOut(() => hideTooltip('#torqueTooltip'));
+
+    frequencySlider.mouseOver(() => showTooltip('#frequencyTooltip'));
+    frequencySlider.mouseOut(() => hideTooltip('#frequencyTooltip'));
+
+    resistanceSlider.mouseOver(() => showTooltip('#resistanceTooltip'));
+    resistanceSlider.mouseOut(() => hideTooltip('#resistanceTooltip'));
 }
 
 function showTooltip(selector) {
