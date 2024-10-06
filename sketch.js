@@ -1,5 +1,5 @@
 let voltageSlider, speedSlider, currentSlider, torqueSlider, frequencySlider, resistanceSlider, motorTypeSelector;
-let motorType = 'DC', voltage = 10, current = 2, speed = 1000, torque = 10, frequency = 50, resistance = 5;
+let motorType = 'DC', voltage = 0, current = 0, speed = 0, torque = 0, frequency = 0, resistance = 0; // Set all initial values to 0
 let isRunning = false, motorAngle = 0, showGraph = false, graphData = [];
 
 function setup() {
@@ -24,12 +24,33 @@ function setup() {
     frequencySlider.input(updateSliderBackground);
     resistanceSlider.input(updateSliderBackground);
 
+    // Add event listener to motor type selector
+    motorTypeSelector.changed(updateMotorTypeLabel);  // Add this to update motor type when changed
+
     // Button event handlers
     select('#startButton').mousePressed(startMotor);
     select('#stopButton').mousePressed(stopMotor);
 
     frameRate(30);
     setupTooltips();
+
+    // Ensure all sliders are initially white (0% filled)
+    updateSliderBackground.call(voltageSlider);
+    updateSliderBackground.call(currentSlider);
+    updateSliderBackground.call(speedSlider);
+    updateSliderBackground.call(torqueSlider);
+    updateSliderBackground.call(frequencySlider);
+    updateSliderBackground.call(resistanceSlider);
+}
+
+// Function to update slider background dynamically
+function updateSliderBackground() {
+    let max = this.elt.max;
+    let value = this.elt.value;
+    let percentage = (value / max) * 100;
+
+    // Update background gradient based on percentage filled
+    this.elt.style.background = `linear-gradient(to right, green ${percentage}%, white ${percentage}%)`;
 }
 
 function draw() {
@@ -49,16 +70,6 @@ function draw() {
     }
 }
 
-// Function to update slider background dynamically
-function updateSliderBackground() {
-    let max = this.elt.max;
-    let value = this.elt.value;
-    let percentage = (value / max) * 100;
-
-    // Update background gradient based on percentage filled
-    this.elt.style.background = `linear-gradient(to right, green ${percentage}%, white ${percentage}%)`;
-}
-
 function drawMotor() {
     // Draw motor visualization
     fill(100, 150, 200);
@@ -75,10 +86,11 @@ function drawMotor() {
     motorAngle += speed / 100;  // Adjusting speed factor to match visual rotation
     if (motorAngle > 360) motorAngle = 0;
 
+    // Display motor type dynamically (DC or AC Motor)
     textAlign(CENTER, CENTER);
     fill(255);
     textSize(24);
-    text(motorType + " Motor", width / 2, height / 2 + 100);  // Display motor type
+    text(motorType + " Motor", width / 2, height / 2 + 100);  // Display motor type dynamically
 }
 
 function updateMotor() {
@@ -100,6 +112,11 @@ function updateMotor() {
     // Store graph data
     graphData.push({ voltage: voltage, speed: speed });
     if (graphData.length > 100) graphData.shift();  // Limit graph data to the last 100 points
+}
+
+// Function to update motor type label dynamically
+function updateMotorTypeLabel() {
+    motorType = motorTypeSelector.value();  // Get the selected motor type (DC or AC)
 }
 
 function displayCalculations() {
